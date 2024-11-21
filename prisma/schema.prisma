@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IdentifierType {
+  EMAIL
+  PHONE
+}
+
+model User {
+  id             String         @id @default(cuid())
+  identifier     String         @unique
+  identifierType IdentifierType
+  createdAt      DateTime       @default(now())
+  meta           UserMeta?
+  merchant       Merchant?
+  beneficiary    Beneficiary?
+  donor          Donor?
+}
+
+model UserMeta {
+  id       String @id @default(cuid())
+  password String @db.Text
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id])
+}
+
+model Beneficiary {
+  id                 String                    @id @default(cuid())
+  userId             String                    @unique
+  firstName          String
+  lastName           String
+  gender             String?
+  numberOfKids       String?
+  address            String?
+  bio                String?                   @db.Text
+  occupation         String?
+  educationLevel     String?
+  passport           String?
+  source             String?
+  identityVerifiedAt DateTime?
+  notifications      BeneficiaryNotification[]
+  requests           ProductRequest[]
+  user               User                      @relation(fields: [userId], references: [id])
+}
+
+model BeneficiaryNotification {
+  id            String      @id @default(cuid())
+  action        String
+  title         String
+  metadata      String      @db.Text
+  beneficiaryId String
+  beneficiary   Beneficiary @relation(fields: [beneficiaryId], references: [id])
+  createdAt     DateTime    @default(now())
+}
+
+model Donor {
+  id                 String              @id @default(cuid())
+  userId             String              @unique
+  firstName          String
+  lastName           String
+  identityVerifiedAt DateTime?
+  requests           ProductRequest[]
+  notifications      DonorNotification[]
+  user               User                @relation(fields: [userId], references: [id])
+}
+
+model DonorNotification {
+  id        String   @id @default(cuid())
+  action    String
+  title     String
+  metadata  String   @db.Text
+  donorId   String
+  donor     Donor    @relation(fields: [donorId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Merchant {
+  id                 String                 @id @default(cuid())
+  userId             String                 @unique
+  firstName          String
+  lastName           String
+  businessName       String
+  address            String?
+  identityVerifiedAt DateTime?
+  user               User                   @relation(fields: [userId], references: [id])
+  notifications      MerchantNotification[]
+  products           Product[]
+}
+
+model MerchantNotification {
+  id         String   @id @default(cuid())
+  action     String
+  title      String
+  metadata   String   @db.Text
+  merchantId String
+  merchant   Merchant @relation(fields: [merchantId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id            String           @id @default(cuid())
+  merchantId    String
+  name          String
+  price         Float
+  contents      String?
+  details       String?
+  pickupAddress String?
+  createdAt     DateTime         @default(now())
+  images        ProductImage[]
+  merchant      Merchant         @relation(fields: [merchantId], references: [id])
+  requests      ProductRequest[]
+}
+
+model ProductImage {
+  id         String  @id @default(cuid())
+  remoteLink String
+  remoteId   String
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+}
+
+model ProductRequest {
+  id                  String      @id @default(cuid())
+  title               String
+  details             String
+  productId           String
+  requestId           String
+  status              String
+  beneficiaryId       String
+  remoteTransactionId String?
+  donorId             String?
+  donor               Donor?      @relation(fields: [donorId], references: [id])
+  createdAt           DateTime    @default(now())
+  benficiary          Beneficiary @relation(fields: [beneficiaryId], references: [id])
+  product             Product     @relation(fields: [productId], references: [id])
+}
