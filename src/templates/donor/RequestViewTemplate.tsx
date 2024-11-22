@@ -7,12 +7,12 @@ import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import dayjs from "dayjs";
 import { useRouter } from "next/router";
-import { enqueueSnackbar } from "notistack";
+import { useState } from "react";
 import useSWR from "swr";
+import BeneficiaryProfile from "./chunks/BeneficiaryProfile";
 
-export default function RequestViewTemplate() {
+function useRequestViewTemplate() {
   const router = useRouter();
-
   const productData = useSWR(
     "ProductsService.FindDonorProduct",
     SWRFetcher(() =>
@@ -22,27 +22,48 @@ export default function RequestViewTemplate() {
     )
   );
 
-  async function handlePurchaseProduct(requestId: string) {
-    const { data, error } = await ProductsService.PurchaseProduct({
-      requestId,
-    });
+  const [isViewBeneficiaryProfile, setIsViewBeneficiaryProfile] =
+    useState(false);
+  const [selectedBeneficiary, setSelectedBeneficiary] = useState<string>("");
 
-    enqueueSnackbar({
-      message: data?.message || error?.message,
-      variant: data ? "success" : "error",
-    });
-
-    if (data) {
-      setTimeout(() => {
-        router.push(data.data.data.authorization_url);
-      }, 2000);
-    }
+  function closeViewBeneficiaryProfile() {
+    setIsViewBeneficiaryProfile(false);
+    setSelectedBeneficiary("");
   }
+
+  function openViewBeneficiaryProfile(id: string) {
+    setIsViewBeneficiaryProfile(true);
+    setSelectedBeneficiary(id);
+  }
+
+  return {
+    isViewBeneficiaryProfile,
+    closeViewBeneficiaryProfile,
+    productData,
+    openViewBeneficiaryProfile,
+    selectedBeneficiary,
+  };
+}
+
+export default function RequestViewTemplate() {
+  const {
+    isViewBeneficiaryProfile,
+    productData,
+    closeViewBeneficiaryProfile,
+    openViewBeneficiaryProfile,
+    selectedBeneficiary,
+  } = useRequestViewTemplate();
 
   return (
     <section className="grid lg:grid-cols-2 xl:flex items-start py-6 gap-6 px-5">
       <section className="bg-white rounded-xl p-6 border border-stone-200 w-full xl:max-w-[500px]">
         <div className="mb-8">
+          {isViewBeneficiaryProfile && (
+            <BeneficiaryProfile
+              beneficiaryId={selectedBeneficiary}
+              onClose={closeViewBeneficiaryProfile}
+            />
+          )}
           <img
             src={
               "https://images.unsplash.com/photo-1615915468538-0fbd857888ca?q=80&w=3336&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -126,7 +147,12 @@ export default function RequestViewTemplate() {
                 />
 
                 <div className="grid gap-1 mt-2 w-max">
-                  <button className="text-xs font-semibold text-stone-500 border border-stone-300 rounded-full py-1 px-4 block w-max">
+                  <button
+                    className="text-xs font-semibold text-stone-500 border border-stone-300 rounded-full py-1 px-4 block w-max"
+                    onClick={() =>
+                      openViewBeneficiaryProfile(request.beneficiaryId)
+                    }
+                  >
                     View full profile
                   </button>
                   <p className="text-sm">

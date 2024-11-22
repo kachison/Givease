@@ -64,7 +64,13 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
   const router = useRouter();
   const h = useDashboardLayout(props);
 
-  console.log("user",props?.user)
+  const shouldShowCompleteProfileInfo =
+    router.asPath !== Routes.Donor.Board &&
+    !router.asPath.includes("/d/board/") &&
+    router.asPath !== Routes.Beneficiary.Setup &&
+    router.asPath !== Routes.Merchant.Setup &&
+    !props.user?.beneficiary?.identityVerifiedAt &&
+    !props.user?.merchant?.identityVerifiedAt;
 
   return (
     <main className="min-h-dvh bg-bg-primary flex flex-col">
@@ -104,35 +110,34 @@ export default function DashboardLayout(props: DashboardLayoutProps) {
         </div>
       </header>
 
-      {router.asPath !== Routes.Beneficiary.Setup &&
-        (!props.user?.beneficiary?.identityVerifiedAt && !props.user?.merchant?.identityVerifiedAt) && (
-          <div className="px-5 mx-auto max-w-screen-2xl mt-6">
-            <SectionAlert>
-              <div className="flex justify-between items-center w-full">
-                <div>
-                  <span className="text-lg block font-medium">
-                    Hi {h.user?.firstName}, Welcome to GivEase
-                  </span>
-                  <span className="block text-stone-400">
-                    Please to get started we would like you to update your
-                    profile and fill out the KYC form.
-                  </span>
-                </div>
-
-                <Link
-                  href={
-                    props?.user?.merchant?.id
-                      ? Routes.Merchant.Setup
-                      : Routes.Beneficiary.Setup
-                  }
-                  className="text-xs font-medium text-white bg-primary rounded-full py-2 px-4 block border-4 border-orange-200"
-                >
-                  Update profile
-                </Link>
+      {shouldShowCompleteProfileInfo && (
+        <div className="px-5 mx-auto max-w-screen-2xl mt-6">
+          <SectionAlert>
+            <div className="flex justify-between items-center w-full">
+              <div>
+                <span className="text-lg block font-medium">
+                  Hi {h.user?.firstName}, Welcome to GivEase
+                </span>
+                <span className="block text-stone-400">
+                  Please to get started we would like you to update your profile
+                  and fill out the KYC form.
+                </span>
               </div>
-            </SectionAlert>
-          </div>
-        )}
+
+              <Link
+                href={
+                  props?.user?.merchant?.id
+                    ? Routes.Merchant.Setup
+                    : Routes.Beneficiary.Setup
+                }
+                className="text-xs font-medium text-white bg-primary rounded-full py-2 px-4 block border-4 border-orange-200"
+              >
+                Update profile
+              </Link>
+            </div>
+          </SectionAlert>
+        </div>
+      )}
 
       <section className="max-w-screen-2xl mx-auto w-full">
         {props.children}

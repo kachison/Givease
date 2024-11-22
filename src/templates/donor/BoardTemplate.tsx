@@ -16,10 +16,10 @@ export default function BoardTemplate(props: { user: TActiveUserSession }) {
     SWRFetcher(() => ProductsService.ListDonorProducts())
   );
 
-  function handleRequestClick() {
-    if (props.user?.beneficiary?.identityVerifiedAt) return;
-    setIsVerificationWarning(true);
-  }
+  // function handleRequestClick() {
+  //   if (props.user?.beneficiary?.identityVerifiedAt) return;
+  //   setIsVerificationWarning(true);
+  // }
 
   return (
     <section className="px-5 mt-5 pb-10">
@@ -82,14 +82,8 @@ export default function BoardTemplate(props: { user: TActiveUserSession }) {
 
                 <div>
                   <Link
-                    // href={
-                    //   !props.user?.donor?.identityVerifiedAt
-                    //     ? "#"
-                    //     : Routes.Donor.RequestView(product.id)
-                    // }
                     href={Routes.Donor.RequestView(product.id)}
                     className="text-xs px-3 py-1.5 bg-primary text-white rounded-full"
-                    onClick={handleRequestClick}
                   >
                     View {product._count.requests} request(s)
                   </Link>
