@@ -84,7 +84,7 @@ export default function ProductRequestTemplate(
 
           <span className="flex items-center text-sm text-stone-500 gap-1">
             <Icon icon={"proicons:location"} width={16} />
-            Opebi, Lagos
+            {h?.productData?.data?.data?.pickupAddress ?? h?.productData?.data?.data?.merchant?.address}
           </span>
         </div>
 
