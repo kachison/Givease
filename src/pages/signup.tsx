@@ -1,5 +1,4 @@
 import AuthLayout from "@/layouts/AuthLayout";
-import SignInTemplate from "@/templates/sign-in-template/SignInTemplate";
 import { Routes } from "@/utils/config/routes.config";
 import {
   __util__clientActiveSession,
@@ -10,7 +9,6 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import { decode } from "jsonwebtoken";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link";
-import React from "react";
 
 export default function SignUpPage() {
   const signInRoutes: ListItem[] = [
@@ -35,7 +33,7 @@ export default function SignUpPage() {
   ];
   return (
     <AuthLayout>
-      <section className="bg-bg-primary min-h-dvh flex">
+      <section className="bg-bg-primary min-h-dvh flex w-full">
         <div className="m-auto w-10/12 max-w-lg h-min">
           <header>
             <h1 className="text-4xl font-semibold">
@@ -73,7 +71,7 @@ export default function SignUpPage() {
           <p className="text-stone-600 max-w-max mx-auto mt-10">
             Already have an account?{" "}
             <Link
-              href={Routes.SignUp}
+              href='/signin'
               className="underline text-primary font-medium"
             >
               {" "}

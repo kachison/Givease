@@ -6,7 +6,6 @@ import {
 } from "@/utils/helpers/session.helper";
 import { decode } from "jsonwebtoken";
 import { GetServerSidePropsContext } from "next";
-import React from "react";
 
 export default function SignInPage() {
   return <SignInTemplate />;

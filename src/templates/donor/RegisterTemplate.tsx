@@ -8,7 +8,7 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { enqueueSnackbar } from "notistack";
-import React, { useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 
 export default function RegisterTemplate() {
@@ -61,7 +61,7 @@ export default function RegisterTemplate() {
 
   return (
     <AuthLayout>
-      <section className="bg-bg-primary min-h-dvh flex">
+      <section className="bg-bg-primary min-h-dvh flex w-full">
         <div className="w-full m-auto">
           <form
             onSubmit={form.handleSubmit}

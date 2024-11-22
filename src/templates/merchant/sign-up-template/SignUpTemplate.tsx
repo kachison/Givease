@@ -6,7 +6,6 @@ import { useForm } from "@/utils/hooks/useForm.hook";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { enqueueSnackbar } from "notistack";
-import React from "react";
 import { z } from "zod";
 
 function useSignUpTemplate() {
@@ -50,7 +49,7 @@ export default function SignUpTemplate() {
   const h = useSignUpTemplate();
   return (
     <AuthLayout>
-      <section className="bg-bg-primary min-h-dvh flex">
+      <section className="bg-bg-primary min-h-dvh flex w-full">
         <div className="w-full m-auto">
           <form
             onSubmit={h.form.handleSubmit}
